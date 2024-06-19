@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ssafy.planner.mapper.PlannerMapper">
+	<resultMap id="PlannerResultMap" type="Planner">
+        <result property="plannerId" column="planner_id"/>
+        <result property="userId" column="user_id"/>
+        <result property="plannerSDate" column="planner_s_date"/>
+        <result property="plannerEDate" column="planner_e_date"/>
+        <result property="plannerTitle" column="planner_title"/>
+    	<result property="plannerVisible" column="planner_visible"/>
+    </resultMap>
+	
+	<resultMap id="planResultMap" type="Plan">
+        <result property="plannerId" column="planner_id"/>
+        <result property="attractionOrder" column="attraction_order"/>
+        <result property="planDate" column="plan_date"/>
+        <result property="attractionContentId" column="attraction_content_id"/>
+    </resultMap>
+	
+	<insert id="insertPlanner" parameterType="planner"  useGeneratedKeys="true" keyProperty="plannerId">
+		insert into planner(user_id, planner_title, planner_s_date, planner_e_date, planner_visible) 
+		values (#{userId}, #{plannerTitle}, #{plannerSDate}, #{plannerEDate}, #{plannerVisible})
+		
+		<selectKey resultType="int" keyProperty="plannerId" order="AFTER">
+			select last_insert_id()
+	    </selectKey>
+	</insert>
+	
+	<insert id="insertPlan" parameterType="plan">
+		insert into plan(planner_id, plan_date, attraction_order, attraction_content_id)
+        values (#{plannerId}, #{planDate}, #{attractionOrder}, #{attractionContentId})
+    </insert>
+    
+    <select id="getPlanners" resultMap="PlannerResultMap">
+    	select * from planner
+    </select>
+    
+    <select id="getPlannerByPlannerId" resultMap="PlannerResultMap">
+    	select * from planner where planner_id = #{plannerId}
+    </select>
+    
+    <select id="getPlannerRandom" resultMap="PlannerResultMap">
+    	SELECT * FROM planner ORDER BY RAND() LIMIT 9;
+    </select>
+    
+    <select id="getPlannersByUserId" resultMap="PlannerResultMap">
+    	select * from planner where user_id = #{userId}
+    </select>
+    
+    <select id="getPlansByPlannerId" resultMap="planResultMap">
+    	select * from plan where planner_id = #{plannerId}
+    </select>
+</mapper>
